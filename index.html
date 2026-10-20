@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MBTI 性格测试 · 16 型人格深度解析</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">MBTI</span>
+    <span class="brand-text">16 型人格深度测试</span>
+  </div>
+  <div class="topbar-actions">
+    <button id="btnToggleAnalysis" class="ghost-btn" title="答题时是否显示每题解析">
+      <span class="dot on" id="dotAnalysis"></span> 答题解析：开
+    </button>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ============ 首页 ============ -->
+  <section id="viewHome" class="view active">
+    <div class="hero card">
+      <div class="hero-badge">32 道题 · 约 5 分钟 · 含逐题解析</div>
+      <h1>你到底是什么<span class="grad">性格</span>？</h1>
+      <p class="hero-sub">
+        基于 MBTI 四维度模型（精力来源 / 信息获取 / 决策方式 / 生活态度），
+        为你测算 16 型人格，并给出<b>每一道题的心理学解析</b>与<b>专属性格画像</b>。
+      </p>
+
+      <div class="dim-grid" id="dimGrid"></div>
+
+      <div class="hero-actions">
+        <button id="btnStart" class="primary-btn">开始测试</button>
+        <button id="btnContinue" class="ghost-btn hidden">继续上次测试</button>
+      </div>
+      <p class="tip">提示：请按<b>第一直觉</b>作答，不要纠结"应该选什么"。键盘 1–5 可快速作答。</p>
+    </div>
+
+    <div class="info-row">
+      <div class="card info-card">
+        <h3>测试说明</h3>
+        <ul>
+          <li>共 32 题，每题 5 档：非常不同意 → 非常同意。</li>
+          <li>答题后可选择立即查看该题的心理学解析。</li>
+          <li>结果页包含：四维得分、优势盲点、职业方向、人际与成长建议。</li>
+        </ul>
+      </div>
+      <div class="card info-card">
+        <h3>结果怎么用</h3>
+        <ul>
+          <li>类型是<b>偏好</b>，不是能力，也不是优劣评级。</li>
+          <li>得分接近 50% 的维度说明你<b>该维度较平衡</b>，两种模式都能用。</li>
+          <li>把"盲点"当作成长线索，而非缺点标签。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 答题页 ============ -->
+  <section id="viewQuiz" class="view">
+    <div class="quiz-wrap">
+      <div class="progress-head">
+        <div class="progress-meta">
+          <span id="qIndex">第 1 / 32 题</span>
+          <span id="qPercent" class="muted">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-inner" id="progressInner"></div></div>
+        <div class="dim-chips" id="dimChips"></div>
+      </div>
+
+      <div class="card quiz-card">
+        <div class="q-dim" id="qDim">精力来源</div>
+        <h2 class="q-text" id="qText">请在两端描述之间，选择最符合你的位置</h2>
+
+        <div class="bipolar" id="bipolar"></div>
+        <div class="options" id="options"></div>
+        <div class="q-source" id="qSource"></div>
+
+        <div class="analysis-box hidden" id="analysisBox">
+          <div class="analysis-title">本题解析</div>
+          <p id="analysisText"></p>
+        </div>
+
+        <div class="quiz-nav">
+          <button id="btnPrev" class="ghost-btn">上一题</button>
+          <span class="nav-hint muted" id="navHint">选择一项后自动进入下一题</span>
+          <button id="btnNext" class="primary-btn">下一题</button>
+        </div>
+      </div>
+
+      <div class="q-dots" id="qDots"></div>
+    </div>
+  </section>
+
+  <!-- ============ 结果页 ============ -->
+  <section id="viewResult" class="view">
+    <div class="result-wrap">
+      <div class="card result-hero">
+        <div class="result-code" id="resultCode">INFP</div>
+        <div class="result-name" id="resultName">调停者</div>
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-tags" id="resultTags"></div>
+        <p class="result-summary" id="resultSummary"></p>
+        <div class="result-actions">
+          <button id="btnCopy" class="ghost-btn">复制结果</button>
+          <button id="btnRestart" class="primary-btn">重新测试</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">四维得分</h3>
+        <div id="bars" class="bars"></div>
+        <div class="balance-note" id="balanceNote"></div>
+      </div>
+
+      <div class="card">
+        <div class="tabs" id="tabs">
+          <button class="tab active" data-tab="strength">优势</button>
+          <button class="tab" data-tab="blind">盲点</button>
+          <button class="tab" data-tab="career">职业方向</button>
+          <button class="tab" data-tab="relation">人际与情感</button>
+          <button class="tab" data-tab="growth">成长建议</button>
+          <button class="tab" data-tab="cog">认知功能</button>
+        </div>
+        <div class="tab-panels">
+          <div class="panel active" data-panel="strength"><ul id="pStrength" class="bullet-list good"></ul></div>
+          <div class="panel" data-panel="blind"><ul id="pBlind" class="bullet-list warn"></ul></div>
+          <div class="panel" data-panel="career">
+            <div class="chips" id="pCareer"></div>
+            <p class="muted small">职业匹配仅供参考，实际选择还需结合兴趣、能力与价值观。</p>
+          </div>
+          <div class="panel" data-panel="relation">
+            <p id="pRelation"></p>
+            <div class="match-box">
+              <span class="muted">常见互补类型：</span>
+              <div class="chips" id="pMatch"></div>
+            </div>
+          </div>
+          <div class="panel" data-panel="growth"><ul id="pGrowth" class="bullet-list"></ul></div>
+          <div class="panel" data-panel="cog">
+            <p id="pCog" class="cog-text"></p>
+            <p class="muted small">认知功能栈描述的是你处理信息的"心理顺序"：主导功能最成熟且最自然，劣势功能最容易在压力下失控，也是成长空间最大的部分。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="review-head">
+          <h3 class="section-title">逐题解析</h3>
+          <button id="btnToggleReview" class="ghost-btn small">展开全部</button>
+        </div>
+        <div id="reviewList" class="review-list collapsed"></div>
+      </div>
+
+      <p class="disclaimer">
+        * MBTI 是描述<b>偏好</b>的工具，用于自我理解与沟通参考，不能作为能力评价、招聘筛选或临床诊断依据。
+      </p>
+
+      <div class="card source-card">
+        <h3 class="section-title">题库来源（逐题可溯源）</h3>
+        <p class="src-line">
+          本测试 32 题全部来自 <b>Open Extended Jungian Type Scales 1.2（OEJTS）</b>，
+          非自行编制题目。每道题在答题页下方均标注英文原题与实测区分度，可逐题核对。
+        </p>
+        <ul class="src-list">
+          <li><b>量表</b>：Open Extended Jungian Type Scales 1.2（OEJTS）</li>
+          <li><b>开发者</b>：Eric Jorgenson，Open-Source Psychometrics Project</li>
+          <li><b>官方页面</b>：<a href="https://openpsychometrics.org/tests/OEJTS/" target="_blank" rel="noopener">openpsychometrics.org/tests/OEJTS</a></li>
+          <li><b>开发文档</b>（含 278 题筛查池与每题区分度）：<a href="https://openpsychometrics.org/tests/OEJTS/development/" target="_blank" rel="noopener">OEJTS / development</a></li>
+          <li><b>授权</b>：CC BY-NC-SA 4.0（署名 - 非商业性使用 - 相同方式共享）</li>
+          <li><b>参考文献</b>：Jorgenson, E. (2014). <i>Development of the Open Extended Jungian Type Scales</i>.；Reynierse, J. H. (2012). <i>Toward an Empirically Sound and Radically Revised Type Theory</i>. Journal of Psychological Type, 72(1).</li>
+        </ul>
+        <p class="src-note">
+          说明：MBTI 官方量表（Form M / Form Q）为 The Myers-Briggs Company 的商业版权量表，需付费授权、
+          不可免费复制使用，因此本测试采用其开源替代量表 OEJTS。OEJTS 基于 25,568 名受试数据实证筛题，
+          统计比较显示它是与 MBTI 一致性最高的在线替代量表之一。本题库按"各维度区分度最高"原则每维度取 8 题，共 32 题。
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">按第一直觉作答 · 结果仅作自我探索参考</footer>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
